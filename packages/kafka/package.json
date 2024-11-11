@@ -1,0 +1,22 @@
+{
+  "name": "@repo/kafka",
+  "version": "0.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/kafkajs": "^1.8.2"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
