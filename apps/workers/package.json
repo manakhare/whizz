@@ -1,8 +1,9 @@
 {
-  "name": "sweeper",
+  "name": "workers",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts"
   },
   "keywords": [],
@@ -11,8 +12,12 @@
   "description": "",
   "dependencies": {
     "@repo/db": "*",
-    "@repo/typescript-config": "*",
     "@repo/kafka": "*",
-    "express": "^4.21.1"
+    "@repo/types": "*",
+    "dotenv": "^16.4.5",
+    "nodemailer": "^6.9.16"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.16"
   }
 }

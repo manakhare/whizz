@@ -1,7 +1,10 @@
 import kafka from "@repo/kafka";
 import client from "@repo/db";
+import express from "express";
 
-const TOPIC_NAME = "zap-events"
+const app = express();
+
+const TOPIC_NAME = "whizz-events"
 
 async function main() {
     const producer = kafka.producer();
@@ -16,9 +19,14 @@ async function main() {
 
         producer.send({
             topic: TOPIC_NAME,
-            messages: pendingRows.map(row => ({
-                value: row.zapRunId
-            }))
+            // messages: pendingRows.map(row => ({
+            //     value: row.zapRunId
+            // }))
+            messages: pendingRows.map(row => {
+                return {
+                    value: JSON.stringify({ zapRunId: row.zapRunId, stage: 0 })
+                }
+            })
         })
 
         await client.zapRunOutbox.deleteMany({
@@ -32,3 +40,8 @@ async function main() {
 }
 
 main();
+
+
+// app.listen(8002, () => {
+//     console.log('Sweeper is listening on PORT 8002');
+// })

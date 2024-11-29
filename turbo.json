@@ -20,6 +20,9 @@
     },
     "db:push": {
       "cache": false
+    },
+    "copy:prisma": {
+     "cache": false
     }
   }
 }

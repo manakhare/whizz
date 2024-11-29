@@ -38,6 +38,6 @@ app.post("/hooks/:userId/:zapId", async (req: Request, res: Response) => {
 
 })
 
-app.listen(8001, () => {
-    console.log("Listening to hooks at port 8001"); 
-})
+// app.listen(8001, () => {
+//     console.log("Listening to hooks at port 8001"); 
+// })
