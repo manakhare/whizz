@@ -1,7 +1,7 @@
 import CheckFeature from '@/components/CheckFeature'
 import Navbar from '@/components/Navbar'
 import SignupForm from '@/components/SignupForm'
-import React from 'react'
+import React from 'react';
 
 export default function Signup() {
   return (

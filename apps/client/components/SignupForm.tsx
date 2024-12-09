@@ -3,31 +3,75 @@ import React, { useState } from 'react'
 import Input from './Input'
 import PrimaryButton from './button/PrimaryButton'
 import Link from 'next/link'
-import axios from 'axios';
+// import axios from 'axios';
 import { BACKEND_DEV_URL } from '@/config';
 import { useRouter } from 'next/navigation';
 import { SignUp } from '@/types';
 
-interface Response {
-    data: {
-        token: string;
-    }
-}
+// interface Response {
+//     data: {
+//         token: string;
+//         userId: number;
+//     }
+// }
 
 export default function SignupForm() {
+    const router = useRouter();
     const [userDetails, setUserDetails] = useState<SignUp>({
         username: "",
         email: "",
         password: ""
     });
-    const router = useRouter();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    
+    // const onSubmit = async () => {
+    //     const res: Response = await axios.post(`${BACKEND_DEV_URL}/api/v1/user/signup`, userDetails);
+    //     localStorage.setItem("token", res.data.token);
+    //     console.log(res.data);
+    //     setUserId(res.data.userId);       
+    //     router.push("/dashboard");
+    // }
 
     const onSubmit = async () => {
-        const res: Response = await axios.post(`${BACKEND_DEV_URL}/api/v1/user/signup`, userDetails);
-        localStorage.setItem("token", res.data.token);
-        console.log(res.data);
-        router.push("/dashboard");
+        try {
+            const res = await fetch(`${BACKEND_DEV_URL}/api/v1/user/signup`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                }, 
+                body: JSON.stringify(userDetails)
+            })
+    
+            const data = await res.json();
+    
+            const user = {
+                username: data.data.username,
+                userId: data.data.userId,
+                email: data.data.email
+            }
+    
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(user));
+
+            router.push("/dashboard")
+        }
+        catch (error) {
+            console.log("Something went wrong while sign up!");
+        }
     }
+
+    // useEffect(() => {
+    //     const user = {
+    //         userId: userId,
+    //         username: userDetails.username,
+    //         email: userDetails.email
+    //     }
+
+    //     localStorage.setItem("user", JSON.stringify(user));
+
+    //     return () => localStorage.removeItem("user");
+    // }, [userId]);
 
     return (
         <div className='px-5 w-full md:w-[80%]  py-5 flex flex-col gap-5 items-center justify-center md:border'>

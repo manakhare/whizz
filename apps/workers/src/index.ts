@@ -54,6 +54,10 @@ async function main() {
             }
 
             const zapRunMetadata = zapRunDetails?.metadata;
+            console.log("--- Current Action ------  ", currentAction);
+            console.log("--- Zap Run Details ----  ", zapRunDetails);
+            
+            
 
             // send email
             if(currentAction.type.id === "email") {
@@ -66,6 +70,10 @@ async function main() {
             }
 
             // send money
+            if(currentAction.type.id === "send-phonepe") {
+                console.log("Sending money...");
+                
+            }
 
             // await new Promise(r => setTimeout(r, 500));
 

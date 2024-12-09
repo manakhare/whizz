@@ -9,6 +9,7 @@ import { ISelectedActions, ISelectedTrigger, IWhizzData } from '@/types';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { showToast } from '@/helper';
 
 function useAvailableActionsAndTriggers() {
   const [availableActions, setAvailableActions] = useState([]);
@@ -49,9 +50,8 @@ function useAvailableActionsAndTriggers() {
 
 
 export default function Create() {
-  // const {availableTriggers, availableActions} = useMemo<IAvailableActionsAndTriggers>(() => useAvailableActionsAndTriggers(), []);
-  const {availableTriggers, availableActions} = useAvailableActionsAndTriggers();
   const router = useRouter();
+  const {availableTriggers, availableActions} = useAvailableActionsAndTriggers();
 
   const [selectedTrigger, setSelectedTrigger] = useState<ISelectedTrigger>();
   const [selectedActions, setSelectedActions] = useState<ISelectedActions[]>([]);
@@ -67,7 +67,7 @@ export default function Create() {
       ...actions,
       {
         index: actions.length + 2,
-        availableActionId: "",
+        availableActionId: "",   
         availableActionName: "",
         metadata: {}
       }
@@ -86,6 +86,7 @@ export default function Create() {
         name: props.name,
       }) 
     } 
+
     else { 
       setSelectedActions(a => {
         const newActions = [...a];
@@ -104,11 +105,9 @@ export default function Create() {
     setSelectedModalIndex(null);
   }
 
-  const onPublish = async () => {
-    if(!selectedTrigger?.index) return;
 
-    // console.log(selectedActions.metadata);
-    
+  const onPublish = async () => {
+    if(!selectedTrigger?.index) return;    
 
     const data: IWhizzData = {
       availableTriggerId: selectedTrigger.name.toLowerCase(),
@@ -121,15 +120,20 @@ export default function Create() {
     }
 
     console.log(data);
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const res: any = await axios.post(`${BACKEND_DEV_URL}/api/v1/whizz`, data, {
+        headers: {
+          Authorization: localStorage.getItem("token")
+        }
+      }) 
+  
+      showToast("success", "Whizz created successfully!")
+    } catch (error) {
+      showToast("error", "Something went wrong while creating your Whizz. Please try again!")
+    }
     
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const res: any = await axios.post(`${BACKEND_DEV_URL}/api/v1/whizz`, data, {
-      headers: {
-        Authorization: localStorage.getItem("token")
-      }
-    }) 
-
     router.push("/dashboard");
   }
 
@@ -150,9 +154,9 @@ export default function Create() {
                 heading={selectedTrigger?.name ? selectedTrigger.name : "Trigger"}
                 text={selectedTrigger?.name || "Select the event that starts your Whizz"} 
                 index={1}
+                type={"Trigger"}
                 onClick={() => {
                   console.log(selectedTrigger);
-                  
                   setSelectedModalIndex(1);
                 }}
             />

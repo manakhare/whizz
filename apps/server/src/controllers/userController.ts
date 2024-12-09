@@ -82,7 +82,7 @@ export const SignIn = async (req: Request, res: Response): Promise<any> => {
         }
     
         // verify password
-        const verifyPassword = await bcrypt.compare(parsedData.data?.password as string, SALT_ROUNDS as string);
+        const verifyPassword = await bcrypt.compare(parsedData.data?.password as string, user?.password as string);
     
         if(!verifyPassword) {
             res.status(401).json({
@@ -103,9 +103,11 @@ export const SignIn = async (req: Request, res: Response): Promise<any> => {
         })
         
     } catch (error) {
-        res.status(400).json({
-            message: "Something went wrong. Please try again!"
-        })
+        console.log(error);
+        
+        // res.status(400).json({
+        //     message: "Something went wrong. Please try again!"
+        // })
     }
 
     

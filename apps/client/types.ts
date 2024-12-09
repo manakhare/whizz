@@ -33,9 +33,11 @@ export interface LoginResponse {
 export interface WhizzList {
     id: string;
     zap_name: string;
-    lastModifiedDate: string;
+    lastModified: string;
     status: string;
     trigger: string;
+    webhookUrl: string;
+    userId: number;
 }
 
 export interface Trigger {
@@ -73,6 +75,7 @@ export interface IWhizzBlock {
     heading: string;
     text?: string;
     index: number;
+    type?: string;
     onClick: () => void;
 }
 
@@ -86,7 +89,9 @@ export interface ISelectedActions {
 
 export interface ISelectedTrigger {
     index: number;
+    id?: string;
     name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     metadata?: any;
     image?: string;
 }
@@ -101,12 +106,14 @@ export interface IMetadata {
 
 export interface IActionData {
     availableActionId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     actionMetadata: any;
     sortingOrder: number;
 }
 
 export interface IWhizzData {
     availableTriggerId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     triggerMetadata?: any;
     actions: IActionData[];
 }

@@ -11,23 +11,6 @@ export const CreateWhizz = async (req: Request, res: Response): Promise<any> => 
         const body = req.body;
 
         console.log(body);
-        
-        // {
-        //     availableActionTriggerId: 1,
-        //     actions: [
-        //         {
-        //             availableActionId: 'email',
-        //             actionMetadata: [Object],
-        //             sortingOrder: 2
-        //         }, 
-        //         {
-        //             availabeActionId: 'send-phonepe',
-        //             actionMetadata: [Object],
-        //             sortingOrder: 3
-        //         }
-        //     ]
-        // }
-        
     
         const parsedData = WhizzCreateSchema.safeParse(body);
         console.log(parsedData.error);
@@ -39,7 +22,7 @@ export const CreateWhizz = async (req: Request, res: Response): Promise<any> => 
             })
         }
 
-        const newWhizz = await client.$transaction(async tx => {
+        const newWhizz = await client.$transaction(async (tx: any) => {
             const zap = await tx.zap.create({
                 data: {
                     userId: parseInt(id),
@@ -72,29 +55,6 @@ export const CreateWhizz = async (req: Request, res: Response): Promise<any> => 
             return zap.id;
         })
     
-        // const newWhizz = await client.zap.create({
-        //     data: {
-        //         userId: parseInt(id),
-        //         zap_name: parsedData.data.zap_name as string || "Untitled",
-        //         actions: {
-        //             create: parsedData.data?.actions.map((action, index) => ({
-        //                 actionId: action.availableActionId,
-        //                 metadata: action.actionMetadata,
-        //                 sortingOrder: index
-        //             }))
-        //         },
-        //         trigger: {
-        //             create: {
-        //                 triggerId: parsedData.data.availableTriggerId,
-        //                 metadata: parsedData.data.triggerMetadata
-        //             }
-        //         }
-        //     }, 
-        //     include: {
-        //         actions: true,
-        //         trigger: true
-        //     }
-        // })
     
         return res.status(201).json({
             newWhizz
@@ -109,6 +69,7 @@ export const CreateWhizz = async (req: Request, res: Response): Promise<any> => 
 
     }
 }
+
 
 export const GetWhizzes = async (req: Request, res: Response) : Promise<any> => {
     try {
@@ -127,6 +88,38 @@ export const GetWhizzes = async (req: Request, res: Response) : Promise<any> => 
     } catch (error) {
         return res.status(404).json({
             message: "Something went wrong while fetching the Whizzes!"
+        })
+    }
+}
+
+export const UpdateWhizz = async (req: Request, res: Response) => {
+    try {
+        //@ts-ignore
+        const id = req.id;
+        const body = req.body;
+
+        console.log(body); 
+        
+        
+        const whizz = await client.zap.update({
+            where: {
+                userId: id,
+                id: body.id
+            },
+            data: {
+                zap_name: body.whizz_name,
+                status: body.status
+            }
+        })
+
+        res.status(200).json({
+            message: "Updated name and status successfully",
+            whizz
+        })
+        
+    } catch (error) {
+        res.status(400).json({
+            message: "Something went wrong while updating the zap_name"
         })
     }
 }
@@ -160,6 +153,31 @@ export const GetActions = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(404).json({
             message: "Cannot find triggers!"
+        })
+    }
+}
+
+export const DeleteWhizz = async (req: Request, res: Response) => {
+    try {
+        const whizzId = req.params.id;
+        //@ts-ignore
+        const id = req.id;
+
+        const deletedWhizz = await client.zap.delete({
+            where: {
+                userId: id,
+                id: whizzId
+            }
+        })
+
+        res.status(200).json({
+            message: "Delete successful",
+            data: deletedWhizz
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            message: "Something went wrong while deleting whizz."
         })
     }
 }
