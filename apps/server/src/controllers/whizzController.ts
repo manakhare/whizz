@@ -160,13 +160,18 @@ export const GetActions = async (req: Request, res: Response) => {
 export const DeleteWhizz = async (req: Request, res: Response) => {
     try {
         const whizzId = req.params.id;
+        const triggerId = req.params.triggerId;
         //@ts-ignore
         const id = req.id;
+
+        console.log("Whizz ID: ", whizzId);
+        
 
         const deletedWhizz = await client.zap.delete({
             where: {
                 userId: id,
-                id: whizzId
+                id: whizzId,
+                triggerId: triggerId
             }
         })
 
@@ -174,8 +179,12 @@ export const DeleteWhizz = async (req: Request, res: Response) => {
             message: "Delete successful",
             data: deletedWhizz
         })
+
+        
         
     } catch (error) {
+        console.log(error);
+        
         res.status(500).json({
             message: "Something went wrong while deleting whizz."
         })

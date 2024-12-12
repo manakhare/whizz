@@ -24,28 +24,28 @@ model User {
 model Zap {
   id           String   @id @default(uuid())
   zap_name     String   @default("Untitled")
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int
   triggerId    String
   lastModified DateTime @default(now())
   status       Status   @default(INACTIVE)
-  trigger      Trigger?
+  trigger      Trigger? 
   actions      Action[]
   zap          ZapRun[]
+}
+
+model Trigger {
+  id        String           @id @default(uuid())
+  zap       Zap              @relation(fields: [zapId], references: [id], onDelete: Cascade)
+  zapId     String           @unique
+  type      AvailableTrigger @relation(fields: [triggerId], references: [id], onDelete: Cascade)
+  triggerId String
+  metadata  Json             @default("{}")
 }
 
 enum Status {
   ACTIVE
   INACTIVE
-}
-
-model Trigger {
-  id        String           @id @default(uuid())
-  zap       Zap              @relation(fields: [zapId], references: [id])
-  zapId     String           @unique
-  type      AvailableTrigger @relation(fields: [triggerId], references: [id])
-  triggerId String
-  metadata  Json             @default("{}")
 }
 
 model AvailableTrigger {
@@ -57,9 +57,9 @@ model AvailableTrigger {
 
 model Action {
   id           String          @id @default(uuid())
-  zap          Zap             @relation(fields: [zapId], references: [id])
+  zap          Zap             @relation(fields: [zapId], references: [id], onDelete: Cascade)
   zapId        String
-  type         AvailableAction @relation(fields: [actionId], references: [id])
+  type         AvailableAction @relation(fields: [actionId], references: [id], onDelete: Cascade)
   actionId     String
   metadata     Json            @default("{}")
   sortingOrder Int             @default(0)
@@ -76,12 +76,12 @@ model ZapRun {
   id           String        @id @default(uuid())
   metadata     Json
   zapId        String
-  zap          Zap           @relation(fields: [zapId], references: [id])
+  zap          Zap           @relation(fields: [zapId], references: [id], onDelete: Cascade)
   zapRunOutBox ZapRunOutbox?
 }
 
 model ZapRunOutbox {
   id       String @id @default(uuid())
   zapRunId String @unique
-  zapRun   ZapRun @relation(fields: [zapRunId], references: [id])
+  zapRun   ZapRun @relation(fields: [zapRunId], references: [id], onDelete: Cascade)
 }

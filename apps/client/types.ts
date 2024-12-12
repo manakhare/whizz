@@ -35,7 +35,7 @@ export interface WhizzList {
     zap_name: string;
     lastModified: string;
     status: string;
-    trigger: string;
+    triggerId: string;
     webhookUrl: string;
     userId: number;
 }

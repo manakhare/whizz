@@ -8,7 +8,7 @@ const router = Router();
 router.post("/", authMiddleware, CreateWhizz);
 router.get("/", authMiddleware, GetWhizzes);
 router.put("/update", authMiddleware, UpdateWhizz);
-router.delete("/delete/:id", authMiddleware, DeleteWhizz);
+router.delete("/delete/whizzId/:id/triggerId/:triggerId", authMiddleware, DeleteWhizz);
 
 // router.post("/zap_name", authMiddleware, CreateWhizzName);
 // router.get("/:id", authMiddleware, GetWhizz);
