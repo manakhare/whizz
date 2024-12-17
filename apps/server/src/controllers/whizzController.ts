@@ -78,6 +78,18 @@ export const GetWhizzes = async (req: Request, res: Response) : Promise<any> => 
         const allWhizzes = await client.zap.findMany({
             where: {
                 userId: parseInt(id)
+            }, 
+            include: {
+                actions: {
+                    include: {
+                        type: true
+                    }
+                },
+                trigger: {
+                    include: {
+                        type: true
+                    }
+                }
             }
         })
 
@@ -180,7 +192,7 @@ export const DeleteWhizz = async (req: Request, res: Response) => {
             data: deletedWhizz
         })
 
-        
+
         
     } catch (error) {
         console.log(error);

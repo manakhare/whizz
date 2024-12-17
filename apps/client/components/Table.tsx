@@ -26,6 +26,7 @@ export default function Table() {
     const [editMode, setEditMode] = useState<boolean[]>([]);
     const [dialogBox, setDialogBox] = useState<boolean[]>([]);
     const [deleted, setDeleted] = useState(false);
+    const [activeEditState, setActiveEditState] = useState(false)
     const [editedDetails, setEditedDetails] = useState({
         id: "",
         whizz_name: "Untitled",
@@ -68,6 +69,7 @@ export default function Table() {
             showToast("error", "Something went wrong while editing the Whizz. Please try again!")
         }
 
+        setActiveEditState(false);
         router.refresh();
         setEditMode((prevEditMode) => prevEditMode.map((ele, i) => i===index ? false : ele));
     }
@@ -98,6 +100,7 @@ export default function Table() {
 
     const handleEditClick = (index: number) => {
         setEditMode((prevEditMode) => prevEditMode.map((ele, i) => i===index ? true : ele));
+        setActiveEditState(true);
     }
 
 
@@ -106,6 +109,7 @@ export default function Table() {
             <table className='table-auto w-full'>
                 <thead>
                     <tr>
+                        <th className='p-2'>Whizz</th>
                         <th className='p-2'>Name</th>
                         <th className='p-2'>Webhook URL</th>
                         <th className='p-2'>Last Modified</th>
@@ -116,6 +120,9 @@ export default function Table() {
                 <tbody className=''>
                     {whizzList.map((whizz: WhizzList, index) => (
                         <tr className='hover:bg-gray-100 border border-transparent border-t-slate-200' key={whizz.id}>
+                            <td className='p-2'>  
+                                <div className='flex flex-wrap flex-row items-center justify-start gap-2'><img src={whizz.trigger.type.image} width={30} height={30}/> {' '} {whizz.actions.map((x) => <img key={x.id} src={x.type.image} width={30} height={30}/>)}</div>
+                            </td>
                             {editMode[index] ?
                                 (<td className='p-2'>
                                     <input
@@ -127,7 +134,7 @@ export default function Table() {
                             <td className='p-2'>{`${BACKEND_DEV_URL}/hooks/${whizz.userId}/${whizz.id}`}</td>
                             <td className='p-2'>{formatDate(whizz?.lastModified)}</td>
                             <td className='p-2 relative'>
-                                <span className=' flex justify-center items-center'>
+                                <span className='flex justify-center items-center'>
                                     {whizz.status === "INACTIVE" ?
                                         (<label className="inline-flex items-center me-5 cursor-pointer">
                                             <input
@@ -172,7 +179,7 @@ export default function Table() {
 
                                         <button 
                                             className='bg-gray-50 border-2 border-gray-500 hover:bg-gray-100 px-3 py-1 rounded-md text-gray-800'
-                                            onClick={() => setEditMode((prevEditMode) => prevEditMode.map((ele, i) => i===index ? false: ele))}
+                                            onClick={() => {setEditMode((prevEditMode) => prevEditMode.map((ele, i) => i===index ? false: ele)); setActiveEditState(false)}}
                                         >
                                             Cancel
                                         </button>
@@ -180,38 +187,31 @@ export default function Table() {
                                     )
                                     :
                                     (
-                                        <span className='flex flex-row justify-start gap-3 absolute top-2 -right-20'>
+                                        <span className='flex flex-row justify-start gap-3 absolute top-5 -right-20'>
                                             <span
-                                                className='cursor-pointer'
-                                                onClick={() => handleEditClick(index)}>
-                                                <Edit size={"size-6"} />
+                                                // className={activeEditState ? `cursor-not-allowed` : 'cursor-pointer'}
+                                                >
+                                                    <button
+                                                        className={activeEditState ? `cursor-not-allowed` : 'cursor-pointer'}
+                                                        onClick={() => handleEditClick(index)}
+                                                        disabled={activeEditState}>
+                                                        <Edit size={"size-6"} />
+                                                    </button>
                                             </span>
 
                                             <span
                                                 className='cursor-pointer'
+                                                
                                                 onClick={() => {
-                                                    // console.log("Clicked delete");
-                                                    
                                                     setDialogBox((prevDialogBox) => prevDialogBox.map((ele, i) => i===index ? true : ele))
                                                     setEditMode((prevEditMode) => prevEditMode.map((ele, i) => i===index ? false : ele))
-                                                    // console.log("Dialog box",dialogBox);
-                                                    // console.log("Edit mode", editMode);
-                                                    
                                                 }}>
                                                 <Delete />
                                             </span>
 
                                         </span>
-
                                     )
                                 }
-
-                                {/* {!editMode[index] &&
-                                    <span
-                                        className='absolute -right-28 top-2 p-1 cursor-pointer'
-                                        onClick={() => setDialogBox((prevDialogBox) => prevDialogBox.map((ele, i) => i===index ? true : ele))}>
-                                    </span>
-                                } */}
 
                                 {
                                     dialogBox[index] &&

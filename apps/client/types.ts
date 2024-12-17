@@ -38,6 +38,29 @@ export interface WhizzList {
     triggerId: string;
     webhookUrl: string;
     userId: number;
+    trigger: {
+        id: string;
+        zapId: string;
+        triggerId: string;
+        metadata: JSON;
+        type: {
+            id: string;
+            name: string;
+            image: string;
+        }
+    },
+    actions: {
+        actionId: string;
+        id: string;
+        metadata: JSON;
+        sortingOrder: number;
+        zapId: string;
+        type: {
+            id: string;
+            name: string;
+            image: string;
+        }
+    }[]
 }
 
 export interface Trigger {
