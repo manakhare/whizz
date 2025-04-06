@@ -77,13 +77,17 @@ interface IEmailMetadataProps {
 const sendEmail = async ({userName, userEmail, body, commentBodyData} : IEmailMetadataProps) => {
     try {
         // const bodyData = body?.split('\n').map((line: string) => `<p>${line}</p>`).join(' ') || " ";
+        // const bodyData = body?.split('\n').map((line: string) => `<p>${line}</p>`).join(' ') || " ";
         const bodyData = body?.split('\n').map((line: string) => `<p>${line}</p>`);
+        // console.log(bodyData);
+        
         const mailOptions = {
             from: userEmail==='webhook' ? commentBodyData?.email : userEmail,
             to: commentBodyData?.email,
             subject: `Hello ${commentBodyData?.name}, ${userName} has sent you a message`,
             text: `${bodyData?.map((line: string) => line.replace(/<p>|<\/p>/g, '')).join('\n')}`,
-            html: `<b>Sent you amount of ${commentBodyData?.amount}</b>`,
+            // html: `<b>Sent you amount of ${commentBodyData?.amount}</b>`,
+            html: `<b>${bodyData}</b>`,
         };
 
         const info = await transporter.sendMail(mailOptions);

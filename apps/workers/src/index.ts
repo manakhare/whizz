@@ -53,7 +53,7 @@ async function main() {
             })
 
             if (zapRunDetails?.zap.status === undefined || zapRunDetails?.zap?.status === "INACTIVE") {
-                console.log("Zap is not active");
+                // console.log("Zap is not active");
                 return;
             }
         

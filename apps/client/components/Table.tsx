@@ -149,7 +149,10 @@ export default function Table() {
                                     <input
                                         placeholder={whizz.zap_name}
                                         className='border-2 border-gray-600 focus:border-green-400 focus:outline-none focus: ring-0 rounded-md px-2 py-1'
-                                        onChange={(e) => setEditedDetails((prevDetails) => prevDetails.map((detail, i) => i === index ? { ...detail, whizz_name: e.target.value } : detail))} />
+                                        onChange={(e) => {
+                                            e.stopPropagation();
+                                        setEditedDetails((prevDetails) =>
+                                         prevDetails.map((detail, i) => i === index ? { ...detail, whizz_name: e.target.value } : detail))}} />
                                 </td>)
                                 : (<td className='p-2'>{whizz.zap_name}</td>)}
                             <td className='p-2'>{`${BACKEND_HOOKS_URL}/hooks/${whizz.userId}/${whizz.id}`}</td>
@@ -163,7 +166,8 @@ export default function Table() {
                                                 disabled={false}
                                                 checked={editedDetails[index]?.status === "ACTIVE" ? true : false}
                                                 className="sr-only peer"
-                                                onChange={editMode[index] ? () => {
+                                                onChange={editMode[index] ? (e) => {
+                                                    e.stopPropagation();
                                                     setEditedDetails((prevDetails) =>
                                                     prevDetails.map((detail, i) =>
                                                         i === index
@@ -189,7 +193,8 @@ export default function Table() {
                                                     // disabled={whizz.status==='ACTIVE' ? false : true}
                                                     checked={true}
                                                     className={`sr-only peer `}
-                                                    onChange={editMode[index] ? () => {
+                                                    onChange={editMode[index] ? (e) => {
+                                                        e.stopPropagation();
                                                         setEditedDetails((prevDetails) =>
                                                             prevDetails.map((detail, i) => (
                                                                 i === index
@@ -213,13 +218,16 @@ export default function Table() {
                                     (<span className='top-2 -right-40 absolute flex flex-row gap-3 items-center'>
                                         <button
                                             className='bg-green-600 hover:bg-green-500 px-3 py-1 rounded-md text-white'
-                                            onClick={() => handleSave(index)}>
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleSave(index)}}>
                                             Save
                                         </button>
 
                                         <button
                                             className='bg-gray-50 border-2 border-gray-500 hover:bg-gray-100 px-3 py-1 rounded-md text-gray-800'
-                                            onClick={() => {
+                                            onClick={(e) => {
+                                                e.stopPropagation();
                                                 setEditMode((prevEditMode) => prevEditMode.map((ele, i) => i === index ? false : ele));
                                                 setActiveEditState((prevEditState) => prevEditState.map((ele, i) => i === index ? false : ele));
                                             }}
@@ -236,7 +244,7 @@ export default function Table() {
                                             >
                                                 <button
                                                     className={activeEditState ? 'cursor-pointer' : `cursor-not-allowed`}
-                                                    onClick={() => handleEditClick(index)}
+                                                    onClick={(e) => {e.stopPropagation(); handleEditClick(index)}}
                                                     disabled={activeEditState[index]}>
                                                     <Edit size={"size-6"} />
                                                 </button>
@@ -245,7 +253,8 @@ export default function Table() {
                                             <span
                                                 className='cursor-pointer'
 
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
                                                     setDialogBox((prevDialogBox) => prevDialogBox.map((ele, i) => i === index ? true : ele))
                                                     setEditMode((prevEditMode) => prevEditMode.map((ele, i) => i === index ? false : ele))
                                                 }}>
