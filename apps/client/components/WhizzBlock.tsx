@@ -48,6 +48,12 @@ export default function WhizzBlock({ heading, text, index, type, onClick }: IWhi
             {type!=="Trigger" && <div className='py-1 px-3 cursor-pointer w-full hover:bg-gray-50'>Delete</div>}
           </div>
       </div>
+
+      {/* {index===1 && 
+        <div className=''>
+          <span>Webhook URL</span>
+          <span></span>
+        </div>} */}
     </div>
   )
 }

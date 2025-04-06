@@ -139,4 +139,5 @@ export interface IWhizzData {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     triggerMetadata?: any;
     actions: IActionData[];
+    status?: "ACTIVE" | "INACTIVE";
 }

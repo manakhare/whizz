@@ -14,16 +14,12 @@ const WhizzCreateSchema = z.object({
         //     address: z.string().optional()
         // }).optional(),
         sortingOrder: z.number().optional()
-    }))
+    })),
+    status: z.string().optional(),
 })
 
-const TriggerType = z.object({
-
-})
-
-const ActionType = z.object({
-
-})
+const TriggerType = z.object({})
+const ActionType = z.object({})
 
 export {
     WhizzCreateSchema,

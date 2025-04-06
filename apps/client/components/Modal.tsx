@@ -20,7 +20,10 @@ export default function Modal({index, onSelect, availableItems} : {
     }>()
     const isTrigger = index === 1;
 
-    console.log(selectedAction);
+    // console.log(step);
+    // console.log(availableItems, "Available items");
+    
+    // console.log(selectedAction);
     
 
     return (
@@ -42,26 +45,33 @@ export default function Modal({index, onSelect, availableItems} : {
                         </button>
                     </div>
                     <div className='p-4 flex flex-col justify-start gap-5 items-start w-full'>
-                        {step===1 && selectedAction?.id==='email' && <EmailSelector setMetadata={(metadata) => {
+                        {step===1 && selectedAction?.id==='gmail' && <EmailSelector setMetadata={(metadata) => {
                             onSelect({
                                 ...selectedAction,
                                 metadata
                             })
                         }} />}
 
-                        {step===1 && selectedAction?.id==='send-phonepe' && <PhonepeSelector setMetadata={(metadata) => {
+                        {step===1 && selectedAction?.id==='phonepe' && <PhonepeSelector setMetadata={(metadata) => {
                             onSelect({
                                 ...selectedAction,
                                 metadata
                             })
                         }} />}
+
+                        {/* {step===1 && selectedAction?.id==='github' && <GithubSelector setMetadata={(metadata) => {
+                            onSelect({
+                                ...selectedAction,
+                                metadata
+                            })
+                        }} />} */}
 
                         {step===0 && availableItems.map((item) => {
                             return <div 
                                 key={item.id}
                                 onClick={() => {
                                     if(isTrigger) {
-                                        console.log(`${item.id}  ${item.name}`);
+                                        // console.log(`${item}`);
                                         
                                         onSelect({
                                             // id: item.id,
@@ -81,10 +91,12 @@ export default function Modal({index, onSelect, availableItems} : {
                                     }
                                 }}
                                 className="flex flex-row justify-start items-center gap-3 py-1 px-2 bg-amber-50 border rounded-md w-full shadow-sm hover:shadow-md hover:cursor-pointer">
-                                    <span className='w-8 h-8 p-1'>
-                                        <img className='w-full h-full object-cover' src={item.image} alt='Icon'></img>
-                                    </span>
-                                    <span>{item.name}</span>
+                                    {/* <div className='flex flex-row justify-start items-center gap-3 py-1 px-2 bg-amber-50 border rounded-md w-full shadow-sm hover:shadow-md hover:cursor-pointer'> */}
+                                        <span className='w-8 h-8 p-1'>
+                                            <img className='w-full h-full object-cover' src={item.image} alt='Icon'></img>
+                                        </span>
+                                        <span>{item.name}</span>
+                                    {/* </div> */}
                             </div>
                         })}
                         

@@ -21,16 +21,18 @@ function useAvailableActionsAndTriggers() {
     useEffect(() => {      
       axios.get(`${BACKEND_DEV_URL}/api/v1/whizz/all-triggers`, {
         headers: {
-          Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTczMjUyMDg5MH0.dQvTqMGNHiskjYaeIXqOohEljI9W9BpVgjOzpBFLOfg"
+          Authorization: localStorage.getItem("token")
         }
       }).then((res: any) => {
         setAvailableTriggers(res.data.availableTriggers || [])
         // availableTriggers = res.data.availableTriggers || []
+        // console.log(res.data);
       })
+      
   
       axios.get(`${BACKEND_DEV_URL}/api/v1/whizz/all-actions`, {
         headers: {
-          Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTczMjUyMDg5MH0.dQvTqMGNHiskjYaeIXqOohEljI9W9BpVgjOzpBFLOfg"
+          Authorization: localStorage.getItem("token")
         }
       }).then((res: any) => {
         setAvailableActions(res.data.availableActions || [])
@@ -57,8 +59,8 @@ export default function Create() {
   const [selectedActions, setSelectedActions] = useState<ISelectedActions[]>([]);
   const [selectedModalIndex, setSelectedModalIndex] = useState<null | number>(null);
 
-  console.log(selectedTrigger);
-  console.log(selectedActions);
+  // console.log(selectedTrigger);
+  // console.log(selectedActions);
   
   
 
@@ -116,10 +118,11 @@ export default function Create() {
         availableActionId: action?.availableActionId,
         actionMetadata: action?.metadata,
         sortingOrder: action?.index
-      })) 
+      })),
+      status: "ACTIVE"
     }
 
-    console.log(data);
+    // console.log(data);
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -149,17 +152,21 @@ export default function Create() {
           </div>
         </div>
 
-        <div className='flex flex-col items-center justify-center w-full md:w-[50%] pt-16'>
+        <div className='relative flex flex-col items-center justify-center w-full md:w-[50%] pt-16'>
             <WhizzBlock 
                 heading={selectedTrigger?.name ? selectedTrigger.name : "Trigger"}
                 text={selectedTrigger?.name || "Select the event that starts your Whizz"} 
                 index={1}
                 type={"Trigger"}
                 onClick={() => {
-                  console.log(selectedTrigger);
+                  // console.log(selectedTrigger);
                   setSelectedModalIndex(1);
                 }}
             />
+
+            {/* {selectedTrigger?.name==="Webhook" ? (
+              <div className='absolute top-5 right-5 bg-black p-5'>Hi</div>
+            ) : null} */}
             
         </div>
 
@@ -171,7 +178,7 @@ export default function Create() {
               text={action.availableActionName || "Action"}
               index={action.index}
               onClick={() => {
-                console.log(action.index);
+                // console.log(action.index);
                 setSelectedModalIndex(action.index);
               }}
             />)}

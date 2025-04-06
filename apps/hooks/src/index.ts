@@ -3,12 +3,13 @@ import client from "@repo/db";
 import kafka from "@repo/kafka";
 
 const app = express();
+app.use(express.json())
 
 app.post("/hooks/:userId/:zapId", async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const zapId = req.params.zapId;
     const metadata = req.body
-    console.log(req.body);
+    // console.log(req.body);
     
 
     try {

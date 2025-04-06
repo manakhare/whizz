@@ -6,12 +6,17 @@ import bcrypt from "bcrypt";
 import { SignInType, SignUpType } from "@repo/types";
 import { SALT_ROUNDS, JWT_SECRET } from "../config";
 
+
 export const SignUp = async (req: Request, res: Response): Promise<any> => {
     const body = req.body;
+    // console.log("body", body);
+    
     const parsedData = SignUpType.safeParse(body);
 
     // check if inputs are correct
     if (parsedData.error) {
+        // console.log("parsedData", parsedData);
+        
         res.status(411).json({
             message: "User input validation failed. Please check your inputs and try again!"
         })
@@ -21,6 +26,14 @@ export const SignUp = async (req: Request, res: Response): Promise<any> => {
     const hashedPassword = await bcrypt.hash(parsedData?.data?.password as string, parseInt(SALT_ROUNDS as string));
 
     try {
+        const userExists = await client.user.findUnique({
+            where: {
+                email: parsedData.data?.email as string
+            }
+        })
+        if (userExists) {
+            return res.status(409).json({ message: "User already exists. Please sign in." })
+        }
         // save user data in DB
         const user = await client.user.create({
             data: {
@@ -31,7 +44,7 @@ export const SignUp = async (req: Request, res: Response): Promise<any> => {
         })
 
         if (!user) {
-            res.status(400).json({
+            return res.status(400).json({
                 message: "Something went wrong while creating account"
             })
         }
@@ -39,7 +52,7 @@ export const SignUp = async (req: Request, res: Response): Promise<any> => {
         // sign the user id and create a authentication token
         const token = await jwt.sign({ userId: user.id }, JWT_SECRET as string);
 
-        res.status(201).json({
+        return res.status(201).json({
             token: token,
             data: {
                 userId: user.id,
@@ -50,8 +63,7 @@ export const SignUp = async (req: Request, res: Response): Promise<any> => {
 
     }
     catch (err) {
-        console.log(err);
-        res.status(500).json({
+        return res.status(500).json({
             message: "Something went wrong while creating your account. Please try again later!"
         })
     }
@@ -76,7 +88,7 @@ export const SignIn = async (req: Request, res: Response): Promise<any> => {
         })
     
         if(!user) {
-            res.status(404).json({
+            return res.status(404).json({
                 message: "User does not exist. Please sign up."
             })
         }
@@ -85,14 +97,14 @@ export const SignIn = async (req: Request, res: Response): Promise<any> => {
         const verifyPassword = await bcrypt.compare(parsedData.data?.password as string, user?.password as string);
     
         if(!verifyPassword) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: "Wrong password. Please try again."
             })
         }
     
         const token = await jwt.sign({ userId: user?.id }, JWT_SECRET as string);
     
-        res.status(200).json({
+        return res.status(200).json({
             message: "Successfully signed in",
             token: token,
             data: {
@@ -103,11 +115,10 @@ export const SignIn = async (req: Request, res: Response): Promise<any> => {
         })
         
     } catch (error) {
-        console.log(error);
         
-        // res.status(400).json({
-        //     message: "Something went wrong. Please try again!"
-        // })
+        res.status(400).json({
+            message: "Something went wrong. Please try again!"
+        })
     }
 
     

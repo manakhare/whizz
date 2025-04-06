@@ -27,30 +27,7 @@ export default function LoginForm() {
   const router = useRouter();
 
   const onSumbit = async () => {
-    // try {
-    //   const res: Response = await axios.post(`${BACKEND_DEV_URL}/api/v1/user/login`, userDetails);
-    //   // setUserId(res.data.userId)
-    //   // setUsername(res.data.username)
-    //   console.log(res.data);
-      
-    //   const user = {
-    //     userId: res.data.userId,
-    //     username: res.data.username,
-    //     email: userDetails.email
-    //   }
-
-    //   console.log(JSON.stringify(user));
-      
-
-    //   localStorage.setItem("token", res.data.token);
-    //   localStorage.setItem("user", JSON.stringify({
-    //     userId: res.data.userId,
-    //     username: res.data.username,
-    //     email: userDetails.email
-    //   }));
-    //   console.log(user);
-      
-    //   router.push('/dashboard')
+   
     try {
       const res = await fetch(`${BACKEND_DEV_URL}/api/v1/user/login`, {
         method: "POST",
@@ -60,12 +37,12 @@ export default function LoginForm() {
         body: JSON.stringify(userDetails)
       })
 
-      if(!res.ok) {
-        console.log("Login failed")
-      }
+      // if(!res.ok) {
+      //   console.log("Login failed")
+      // }
 
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify({
@@ -77,15 +54,15 @@ export default function LoginForm() {
       showToast("success", "Successfully logged in");
       router.push('/dashboard')
     } catch (error) {
-      console.log("ERROR", error);
+      // console.log("ERROR", error);
       showToast("error", "Error! Please try again!")
-      console.log("Something went wrong during login");
+      // console.log("Something went wrong during login");
     }
   }
 
 
   return (
-    <div className='w-[60%] md:flex md:flex-col md:flex-start md:items-center'>
+    <div className='w-full md:flex md:flex-col md:flex-start md:items-center'>
 
       <div className='flex justify-center items-center font-semibold text-2xl pb-3 md:justify-center'>Log in to your account</div>
 

@@ -1,10 +1,10 @@
 import kafka from "@repo/kafka";
 import client from "@repo/db";
 import express from "express";
-
+import dotenv from "dotenv";
+dotenv.config();
 const app = express();
 
-const TOPIC_NAME = "whizz-events"
 
 async function main() {
     const producer = kafka.producer();
@@ -18,7 +18,7 @@ async function main() {
         })
 
         producer.send({
-            topic: TOPIC_NAME,
+            topic: process.env.TOPIC_NAME as string,
             // messages: pendingRows.map(row => ({
             //     value: row.zapRunId
             // }))

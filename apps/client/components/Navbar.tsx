@@ -25,8 +25,8 @@ export default function Navbar() {
             {
                 localStorage.getItem("user") === null ?
                     (
-                        <div className='pb-3 z-10 px-6 md:px-10 flex justify-between text-center items-center border border-t-transparent w-full'>
-                            <div className='text-3xl font-extrabold tracking-wider'>💨 Whizz...</div>
+                        <div className='pb-3 z-10 px-6 md:px-10 flex justify-between text-center items-center border-b w-full'>
+                            <div className='text-2xl md:text-3xl flex flex-row justify-start font-extrabold tracking-wider'>💨 Whizz</div>
                             <div className='flex justify-between items-center'>
                                 <div>
                                     <LinkButton onClick={() => { router.push('/login') }}>Login</LinkButton>
@@ -38,7 +38,7 @@ export default function Navbar() {
                         </div>
                     ) : (
                         <div className='pb-3 z-10 px-6 md:px-10 flex justify-between text-center items-center border border-t-transparent w-full'>
-                            <div className='text-3xl font-extrabold tracking-wider'>
+                            <div className='text-2xl flex flex-row justify-start md:text-3xl font-extrabold tracking-wider'>
                                 <Link href="/dashboard">
                                     💨 Whizz...
                                 </Link>

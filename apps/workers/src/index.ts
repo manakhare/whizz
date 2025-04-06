@@ -3,8 +3,12 @@ import client from "@repo/db"
 import kafka from "@repo/kafka"
 import JsonObject from "@repo/db"
 import sendEmail from "./services/email"
+import { parse } from "./services/parse"
+import { IAction, ICommentBody, IEmailMetadata, IPhonepeMetadata, IWebhookMetadata } from "../types"
 
 dotenv.config();
+
+
 
 async function main() {
     const consumer = kafka.consumer({ groupId: "main-worker"});
@@ -25,9 +29,11 @@ async function main() {
             
             if(!message.value?.toString()) return;
 
+            // console.log("------MESSAGE VALUE-------", message.value.toString());
+
             const parsedValue = JSON.parse(message.value?.toString());
             const zapRunId = parsedValue.zapRunId;
-            const stage = parsedValue.stage;
+            const stage = parsedValue.stage===0 ? 1 : parsedValue.stage;
 
             const zapRunDetails = await client.zapRun.findFirst({
                 where: {
@@ -46,42 +52,58 @@ async function main() {
                 }
             })
 
-            const currentAction = zapRunDetails?.zap.actions.find( x => x.sortingOrder === stage);
+            if (zapRunDetails?.zap.status === undefined || zapRunDetails?.zap?.status === "INACTIVE") {
+                console.log("Zap is not active");
+                return;
+            }
+        
+
+            const zapActions = zapRunDetails?.zap.actions
+            
+
+            const currentAction = zapRunDetails?.zap.actions.find( x => {
+                return x.sortingOrder === stage
+            });
+
 
             if(!currentAction) {
                 console.log("current action not found");
                 return;
             }
-
-            const zapRunMetadata = zapRunDetails?.metadata;
-            console.log("--- Current Action ------  ", currentAction);
-            console.log("--- Zap Run Details ----  ", zapRunDetails);
             
-            
-
             // send email
-            if(currentAction.type.id === "email") {
-                console.log("Sending mail...");
+            if(currentAction.type.id === "gmail") {
+                const emailMetadata  = currentAction.metadata as unknown as typeof JsonObject;
+                const { senderEmail, receiverEmail, body } = emailMetadata as unknown as IEmailMetadata;
+                const webhookMetadata = zapRunDetails?.metadata as unknown as IWebhookMetadata;
+                const { userName, userEmail, receiverName, commentBody } = webhookMetadata;
+                const commentBodyData = parse(commentBody);
                 
-            //     const body = parse((currentAction.metadata as JsonObject)?.body as string, zapRunMetadata);
-            //     const to = parse((currentAction.metadata as JsonObject))?.body as string, zapRunMetadata);
-            //     console.log(`Sending out email to ${to} with body ${body}`);
-            //     await sendEmail(to, body);
+                const sendmail = await sendEmail({userName, userEmail, body, commentBodyData})
+                console.log("Send mail: ", sendmail);
+                
+                console.log(`Sending email to ${receiverEmail==='webhook' ? commentBodyData.email : receiverEmail} from ${senderEmail==='webhook' ? userEmail : senderEmail}`);
             }
 
             // send money
-            if(currentAction.type.id === "send-phonepe") {
-                console.log("Sending money...");
+            if(currentAction.type.id === "phonepe") {
+                const paymentMetadata = currentAction.metadata as unknown as typeof JsonObject;
+                const { fromUPI, toUpi, amount } = paymentMetadata as unknown as IPhonepeMetadata;
+                const webhookMetadata = zapRunDetails?.metadata as unknown as IWebhookMetadata;
+                const { userName, userEmail, receiverName, commentBody } = webhookMetadata;
+                const commentBodyData = parse(commentBody);
+
                 
+                const from = fromUPI === 'webhook' ? commentBodyData?.senderUpiId : fromUPI;
+                const to = toUpi === 'webhook' ? commentBodyData?.upiId : toUpi;
+                const amountValue = amount === 'webhook' ? commentBodyData?.amount : amount;
+                
+                console.log(`Sending money from ${from} to ${to} of amount ${amountValue}`);
             }
 
-            // await new Promise(r => setTimeout(r, 500));
-
-            const lastStage = (zapRunDetails?.zap.actions?.length || 1) - 1; //1
-            console.log(lastStage);
-            console.log(stage);
+            const lastStage = (zapRunDetails?.zap.actions?.length || 1); //1
             
-            if(lastStage != stage) {
+            if(lastStage !== stage) {
                 console.log("Pushing back to the queue");
                 
                 await producer.send({
