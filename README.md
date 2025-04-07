@@ -1,6 +1,11 @@
 # Whizz
 A workflow automation platform inspired by Zapier, built using Turborepo.
 
+
+
+https://github.com/user-attachments/assets/7817b977-1ded-4a3f-8697-6411b4059123
+
+
 ## Features
 - Authenticated signin/ signup
 - Create/Read/Update/Delete whizz created by you
